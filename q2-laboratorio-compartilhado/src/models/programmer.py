@@ -15,7 +15,13 @@ class Programmer(threading.Thread):
     antes de compilar. O ciclo se repete até que o stop_event seja sinalizado.
     """
 
-    def __init__(self, programmer_id, resource_manager, display_service, stop_event):
+    def __init__(
+        self,
+        programmer_id: int,
+        resource_manager: "ResourceManager",
+        display_service: "DisplayService",
+        stop_event: threading.Event,
+    ) -> None:
         """Inicializa o programador.
 
         Args:
@@ -30,7 +36,7 @@ class Programmer(threading.Thread):
         self.display_service = display_service
         self.stop_event = stop_event
 
-    def run(self):
+    def run(self) -> None:
         """Executa o ciclo principal: pensar → adquirir → compilar → liberar."""
         while not self.stop_event.is_set():
             self.think()
@@ -40,12 +46,12 @@ class Programmer(threading.Thread):
             self.compile_code()
             self.release_resources()
 
-    def think(self):
+    def think(self) -> None:
         """Simula o programador pensando por um tempo aleatório."""
         self.display_service.log(self.programmer_id, ProgrammerState.THINKING)
         self.stop_event.wait(random.uniform(MIN_THINK_TIME, MAX_THINK_TIME))
 
-    def acquire_resources(self):
+    def acquire_resources(self) -> None:
         """Adquire compilador (exclusivo) e banco de dados (compartilhado).
 
         A ordem de aquisição é compilador primeiro, depois banco de dados,
@@ -57,12 +63,12 @@ class Programmer(threading.Thread):
         self.display_service.log(self.programmer_id, ProgrammerState.WAITING_DB)
         self.resource_manager.acquire_db()
 
-    def compile_code(self):
+    def compile_code(self) -> None:
         """Simula a compilação do código por um tempo aleatório."""
         self.display_service.log(self.programmer_id, ProgrammerState.COMPILING)
         self.stop_event.wait(random.uniform(MIN_COMPILE_TIME, MAX_COMPILE_TIME))
 
-    def release_resources(self):
+    def release_resources(self) -> None:
         """Libera banco de dados e compilador na ordem inversa da aquisição."""
         self.resource_manager.release()
         self.display_service.log(self.programmer_id, ProgrammerState.RELEASING)

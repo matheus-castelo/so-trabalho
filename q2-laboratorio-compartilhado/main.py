@@ -12,16 +12,16 @@ from src.services.display_service import DisplayService
 from src.models.programmer import Programmer
 
 
-def main():
+def main() -> None:
     """Inicializa e executa a simulação do laboratório compartilhado."""
     print("Iniciando o trabalho no laboratório...")
     print("-" * 50)
 
-    resource_manager = ResourceManager()
-    display_service = DisplayService()
-    stop_event = threading.Event()
+    resource_manager: ResourceManager = ResourceManager()
+    display_service: DisplayService = DisplayService()
+    stop_event: threading.Event = threading.Event()
 
-    programmers = []
+    programmers: list[Programmer] = []
     for i in range(1, NUM_PROGRAMMERS + 1):
         programmer = Programmer(i, resource_manager, display_service, stop_event)
         programmer.daemon = True
