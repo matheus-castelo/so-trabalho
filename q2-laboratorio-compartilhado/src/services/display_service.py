@@ -1,32 +1,33 @@
 import threading
 
+from src.utils.colors import Colors
+
 
 class DisplayService:
     def __init__(self):
         self.console_lock = threading.Lock()
 
         self.programmer_colors = {
-            1: '\033[94m',
-            2: '\033[96m',
-            3: '\033[95m',
-            4: '\033[33m',
-            5: '\033[36m',
+            1: Colors.P1,
+            2: Colors.P2,
+            3: Colors.P3,
+            4: Colors.P4,
+            5: Colors.P5,
         }
 
     def log(self, programmer_id, status):
         with self.console_lock:
-            p_color = self.programmer_colors.get(programmer_id, '\033[0m')
-            reset = '\033[0m'
+            p_color = self.programmer_colors.get(programmer_id, Colors.RESET)
 
             if "Pensando" in status:
-                s_color = '\033[90m'
+                s_color = Colors.THINKING
             elif "Aguardando Compilador" in status:
-                s_color = '\033[91m'
+                s_color = Colors.WAITING
             elif "Aguardando Banco" in status:
-                s_color = '\033[93m'
+                s_color = Colors.WAITING_DB
             elif "COMPILANDO" in status:
-                s_color = '\033[92m\033[1m'
+                s_color = f"{Colors.COMPILING}{Colors.BOLD}"
             else:
-                s_color = '\033[93m'
+                s_color = Colors.RELEASING
 
-            print(f"{p_color}[Programador {programmer_id}]{reset} Status: {s_color}{status}{reset}")
+            print(f"{p_color}[Programador {programmer_id}]{Colors.RESET} Status: {s_color}{status}{Colors.RESET}")
