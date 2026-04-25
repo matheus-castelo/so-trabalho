@@ -2,6 +2,8 @@ import threading
 import time
 import random
 
+from src.utils.constants import MIN_THINK_TIME, MAX_THINK_TIME, MIN_COMPILE_TIME, MAX_COMPILE_TIME
+
 
 class Programmer(threading.Thread):
     def __init__(self, programmer_id, resource_manager, display_service):
@@ -19,7 +21,7 @@ class Programmer(threading.Thread):
 
     def think(self):
         self.display_service.log(self.programmer_id, "Pensando...")
-        time.sleep(random.uniform(1.0, 3.0))
+        time.sleep(random.uniform(MIN_THINK_TIME, MAX_THINK_TIME))
 
     def acquire_resources(self):
         self.display_service.log(self.programmer_id, "Aguardando Compilador...")
@@ -30,7 +32,7 @@ class Programmer(threading.Thread):
 
     def compile_code(self):
         self.display_service.log(self.programmer_id, "COMPILANDO (Compilador + Banco de Dados)")
-        time.sleep(random.uniform(2.0, 4.0))
+        time.sleep(random.uniform(MIN_COMPILE_TIME, MAX_COMPILE_TIME))
 
     def release_resources(self):
         self.resource_manager.release()
