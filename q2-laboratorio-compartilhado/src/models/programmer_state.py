@@ -1,8 +1,13 @@
+"""Enum que representa os estados possíveis de um programador na simulação."""
+
 from enum import Enum
 
 
 class ProgrammerState(Enum):
-    """Represents the possible states of a programmer in the simulation."""
+    """Estados do ciclo de vida de um programador no laboratório.
+
+    Cada valor contém a mensagem em português exibida no terminal.
+    """
 
     THINKING = "Pensando..."
     WAITING_COMPILER = "Aguardando Compilador..."

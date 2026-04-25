@@ -1,3 +1,5 @@
+"""Constantes de configuração da simulação do laboratório compartilhado."""
+
 NUM_PROGRAMMERS = 5
 
 MAX_DB_ACCESS = 2

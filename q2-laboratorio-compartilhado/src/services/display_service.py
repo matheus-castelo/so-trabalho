@@ -1,3 +1,5 @@
+"""Serviço de exibição de status dos programadores no terminal com cores ANSI."""
+
 import threading
 
 from src.utils.colors import Colors
@@ -14,7 +16,14 @@ STATE_COLORS = {
 
 
 class DisplayService:
+    """Serviço thread-safe para exibição de status no terminal.
+
+    Utiliza um Lock interno para garantir que as mensagens de log
+    não se sobreponham quando múltiplas threads escrevem simultaneamente.
+    """
+
     def __init__(self):
+        """Inicializa o lock de console e o mapeamento de cores por programador."""
         self.console_lock = threading.Lock()
 
         self.programmer_colors = {
@@ -26,6 +35,12 @@ class DisplayService:
         }
 
     def log(self, programmer_id, state):
+        """Exibe o status de um programador no terminal com cores.
+
+        Args:
+            programmer_id: Identificador numérico do programador.
+            state: Estado atual do programador (ProgrammerState).
+        """
         with self.console_lock:
             p_color = self.programmer_colors.get(programmer_id, Colors.RESET)
             s_color = STATE_COLORS.get(state, Colors.RESET)
