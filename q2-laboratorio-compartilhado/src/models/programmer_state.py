@@ -10,7 +10,7 @@ class ProgrammerState(Enum):
     """
 
     THINKING = "Pensando..."
+    WAITING_DB = "Aguardando Banco de Dados..."
     WAITING_COMPILER = "Aguardando Compilador..."
-    WAITING_DB = "Compilador adquirido. Aguardando Banco de Dados..."
-    COMPILING = "COMPILANDO (Compilador + Banco de Dados)"
-    RELEASING = "Liberou os recursos."
+    COMPILING = "Compilando..."
+    RELEASING = "Liberando recursos..."
