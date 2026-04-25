@@ -2,6 +2,7 @@ import threading
 import time
 import random
 
+
 class Programmer(threading.Thread):
     def __init__(self, programmer_id, resource_manager, display_service):
         super().__init__(name=f"Programador-{programmer_id}")
@@ -21,11 +22,11 @@ class Programmer(threading.Thread):
         time.sleep(random.uniform(1.0, 3.0))
 
     def acquire_resources(self):
-        self.display_service.log(self.programmer_id, "Aguardando Banco de Dados...")
-        self.resource_manager.acquire_db()
-        
-        self.display_service.log(self.programmer_id, "No Banco de Dados (Aguardando Compilador...)")
+        self.display_service.log(self.programmer_id, "Aguardando Compilador...")
         self.resource_manager.acquire_compiler()
+
+        self.display_service.log(self.programmer_id, "Compilador adquirido. Aguardando Banco de Dados...")
+        self.resource_manager.acquire_db()
 
     def compile_code(self):
         self.display_service.log(self.programmer_id, "COMPILANDO (Compilador + Banco de Dados)")
