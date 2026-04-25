@@ -3,17 +3,14 @@ import threading
 class ResourceManager:
     def __init__(self):
         self.compiler = threading.Lock()
-        
         self.database = threading.Semaphore(2)
 
-    def acquire(self, programmer_id):
-
-        self.compiler.acquire()
-        
+    def acquire_db(self):
         self.database.acquire()
-
-    def release(self, programmer_id):
-
-        self.database.release()
         
+    def acquire_compiler(self):
+        self.compiler.acquire()
+
+    def release(self):
         self.compiler.release()
+        self.database.release()
