@@ -14,6 +14,7 @@ def main():
     programmers = []
     for i in range(1, NUM_PROGRAMMERS + 1):
         programmer = Programmer(i, resource_manager, display_service)
+        programmer.daemon = True 
         programmers.append(programmer)
 
     for programmer in programmers:
@@ -23,7 +24,9 @@ def main():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print("\n\n Dia de trabalho finalizado!.")
+        print("\n" + "="*50)
+        print("🛑 Dia de trabalho finalizado com sucesso! (Ctrl+C)")
+        print("="*50 + "\n")
 
 if __name__ == "__main__":
     main()
