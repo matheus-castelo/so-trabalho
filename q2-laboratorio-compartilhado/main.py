@@ -37,14 +37,19 @@ def main() -> None:
         print("\n" + "=" * 50)
         print("🛑 Encerrando... Aguardando programadores finalizarem.")
         print("=" * 50)
-
+    finally:
         stop_event.set()
 
         for programmer in programmers:
             programmer.join(timeout=5)
 
+        alive_threads = [p.name for p in programmers if p.is_alive()]
+
         print("\n" + "=" * 50)
-        print("✅ Dia de trabalho finalizado com sucesso!")
+        if alive_threads:
+            print(f"⚠️ Aviso: As seguintes threads não encerraram corretamente: {', '.join(alive_threads)}")
+        else:
+            print("✅ Dia de trabalho finalizado com sucesso!")
         print("=" * 50 + "\n")
 
 
