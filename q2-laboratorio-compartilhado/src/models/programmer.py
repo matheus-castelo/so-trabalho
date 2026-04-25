@@ -8,8 +8,8 @@ class Programmer(threading.Thread):
     def __init__(
         self,
         programmer_id: int,
-        resource_manager: "ResourceManager",
-        display_service: "DisplayService",
+        resource_manager,
+        display_service,
         stop_event: threading.Event,
     ) -> None:
         super().__init__(name=f"Programador-{programmer_id}")
@@ -19,17 +19,18 @@ class Programmer(threading.Thread):
         self.stop_event = stop_event
 
     def run(self) -> None:
+        def log_wait_compiler():
+            self.display_service.log(self.programmer_id, ProgrammerState.WAITING_COMPILER)
+
         while not self.stop_event.is_set():
             self.think()
             if self.stop_event.is_set():
                 break
             
             self.display_service.log(self.programmer_id, ProgrammerState.WAITING_DB)
-            with self.resource_manager.database:
-                self.display_service.log(self.programmer_id, ProgrammerState.WAITING_COMPILER)
-                with self.resource_manager.compiler:
-                    if not self.stop_event.is_set():
-                        self.compile_code()
+            with self.resource_manager.use_resources(self.stop_event, log_wait_compiler) as acquired:
+                if acquired and not self.stop_event.is_set():
+                    self.compile_code()
             
             self.display_service.log(self.programmer_id, ProgrammerState.RELEASING)
 
