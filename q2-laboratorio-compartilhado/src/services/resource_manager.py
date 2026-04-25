@@ -17,15 +17,24 @@ class ResourceManager:
         self.compiler: threading.Lock = threading.Lock()
         self.database: threading.Semaphore = threading.Semaphore(MAX_DB_ACCESS)
 
-    def acquire_compiler(self) -> None:
-        """Adquire acesso exclusivo ao compilador (bloqueante)."""
-        self.compiler.acquire()
+    def acquire_compiler(self, stop_event: threading.Event) -> bool:
+        """Adquire acesso exclusivo ao compilador com suporte a cancelamento."""
+        while not stop_event.is_set():
+            if self.compiler.acquire(timeout=0.2):
+                return True
+        return False
 
-    def acquire_db(self) -> None:
-        """Adquire acesso compartilhado ao banco de dados (bloqueante)."""
-        self.database.acquire()
+    def acquire_db(self, stop_event: threading.Event) -> bool:
+        """Adquire acesso compartilhado ao banco de dados com suporte a cancelamento."""
+        while not stop_event.is_set():
+            if self.database.acquire(timeout=0.2):
+                return True
+        return False
 
-    def release(self) -> None:
-        """Libera banco de dados e compilador na ordem inversa da aquisição."""
+    def release_db(self) -> None:
+        """Libera acesso ao banco de dados."""
         self.database.release()
+
+    def release_compiler(self) -> None:
+        """Libera acesso exclusivo ao compilador."""
         self.compiler.release()
