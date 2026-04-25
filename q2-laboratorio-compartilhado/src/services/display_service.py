@@ -1,6 +1,16 @@
 import threading
 
 from src.utils.colors import Colors
+from src.models.programmer_state import ProgrammerState
+
+
+STATE_COLORS = {
+    ProgrammerState.THINKING: Colors.THINKING,
+    ProgrammerState.WAITING_COMPILER: Colors.WAITING,
+    ProgrammerState.WAITING_DB: Colors.WAITING_DB,
+    ProgrammerState.COMPILING: f"{Colors.COMPILING}{Colors.BOLD}",
+    ProgrammerState.RELEASING: Colors.RELEASING,
+}
 
 
 class DisplayService:
@@ -15,19 +25,9 @@ class DisplayService:
             5: Colors.P5,
         }
 
-    def log(self, programmer_id, status):
+    def log(self, programmer_id, state):
         with self.console_lock:
             p_color = self.programmer_colors.get(programmer_id, Colors.RESET)
+            s_color = STATE_COLORS.get(state, Colors.RESET)
 
-            if "Pensando" in status:
-                s_color = Colors.THINKING
-            elif "Aguardando Compilador" in status:
-                s_color = Colors.WAITING
-            elif "Aguardando Banco" in status:
-                s_color = Colors.WAITING_DB
-            elif "COMPILANDO" in status:
-                s_color = f"{Colors.COMPILING}{Colors.BOLD}"
-            else:
-                s_color = Colors.RELEASING
-
-            print(f"{p_color}[Programador {programmer_id}]{Colors.RESET} Status: {s_color}{status}{Colors.RESET}")
+            print(f"{p_color}[Programador {programmer_id}]{Colors.RESET} Status: {s_color}{state.value}{Colors.RESET}")
