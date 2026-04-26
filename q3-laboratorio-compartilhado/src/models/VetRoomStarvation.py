@@ -21,3 +21,15 @@ class VetRoomStarvation:
                 self.cat_count += 1
         print(f"[{species}] {animal_id} ENTROU na sala.")
     
+    def leave(self,animal_id,species):
+        if species == "DOG":
+            with self.dog_lock:
+                self.dog_count -= 1
+                if self.dog_count == 0:
+                    self.door.release()
+        else:
+            with self.cat_lock:
+                self.cat_count -= 1
+                if self.cat_count == 0:
+                    self.door.release()
+        print(f"[{species}] {animal_id} SAIU da sala.")    
