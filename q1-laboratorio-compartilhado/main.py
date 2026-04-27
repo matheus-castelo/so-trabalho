@@ -17,24 +17,23 @@ def main():
     janela = 100
     quantums = [1, 2, 4, 8, 16]
 
-    # SRTF
     print("\n===== SRTF =====")
-    proc_srtf, timeline_srtf, tempo_total = simular_srtf(processos_base, context_switch)
+    proc_srtf, timeline_srtf, tempo_total_srtf = simular_srtf(processos_base, context_switch)
     metricas_srtf = calcular_metricas(proc_srtf, janela)
 
     print("Timeline:", timeline_srtf)
     print("Métricas:", metricas_srtf)
+    print("Tempo total:",tempo_total_srtf)
 
-    # RR
     print("\n===== ROUND ROBIN =====")
     for q in quantums:
         print(f"\n--- Quantum = {q} ---")
-        proc_rr, timeline_rr, tempo_total = simular_rr(processos_base, q, context_switch)
+        proc_rr, timeline_rr, tempo_total_rr = simular_rr(processos_base, q, context_switch)
         metricas_rr = calcular_metricas(proc_rr, janela)
 
         print("Timeline:", timeline_rr)
         print("Métricas:", metricas_rr)
-
+        print("Tempo total:",tempo_total_rr)
 
 if __name__ == "__main__":
     main()
