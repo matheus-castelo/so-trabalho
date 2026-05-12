@@ -1,39 +1,22 @@
-from src.models.processo import Processo
-from src.services.srtf_service import simular_srtf
-from src.services.round_robin_service import simular_rr
-from src.services.metricas_service import calcular_metricas
-
+import json
+from src.services.srtf_service import escalonamento_srtf
+from src.services.round_robin_service import escalonamento_rr
+from src.utils.colors import Colors
 
 def main():
-    processos_base = [
-        Processo("P01", 0, 5),
-        Processo("P02", 1, 17),
-        Processo("P03", 2, 3),
-        Processo("P04", 4, 22),
-        Processo("P05", 6, 7),
-    ]
+    caminho_arquivo = "src/data/processos.json"
 
-    context_switch = 1
-    janela = 100
-    quantums = [1, 2, 4, 8, 16]
+    try:
+        with open(caminho_arquivo, 'r', encoding='utf-8') as f:
+            dados_entrada = json.load(f)
+    except FileNotFoundError:
+        print(f"{Colors.RED}{Colors.BOLD}Erro crítico: O arquivo '{caminho_arquivo}' não foi encontrado.{Colors.RESET}")
+        return
 
-    print("\n===== SRTF =====")
-    proc_srtf, timeline_srtf, tempo_total_srtf = simular_srtf(processos_base, context_switch)
-    metricas_srtf = calcular_metricas(proc_srtf, janela)
+    print(f"\n{Colors.GREEN}{Colors.BOLD}[✓] Dados carregados com sucesso! Iniciando simulações...{Colors.RESET}\n")
 
-    print("Timeline:", timeline_srtf)
-    print("Métricas:", metricas_srtf)
-    print("Tempo total:",tempo_total_srtf)
-
-    print("\n===== ROUND ROBIN =====")
-    for q in quantums:
-        print(f"\n--- Quantum = {q} ---")
-        proc_rr, timeline_rr, tempo_total_rr = simular_rr(processos_base, q, context_switch)
-        metricas_rr = calcular_metricas(proc_rr, janela)
-
-        print("Timeline:", timeline_rr)
-        print("Métricas:", metricas_rr)
-        print("Tempo total:",tempo_total_rr)
+    escalonamento_srtf(dados_entrada)
+    escalonamento_rr(dados_entrada)
 
 if __name__ == "__main__":
     main()
