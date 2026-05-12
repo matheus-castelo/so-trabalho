@@ -5,7 +5,7 @@
     "context_switch_cost": 1,
     "throughput_window_T": 100,
     "algorithms": ["RR", "SRTF"],
-    "rr_quantums": [1, 2, 4, 8, 16]
+    "rr_quantums": [1, 2, 4, 8, 16, 22]
   },
   "workload": {
     "time_unit": "ticks",

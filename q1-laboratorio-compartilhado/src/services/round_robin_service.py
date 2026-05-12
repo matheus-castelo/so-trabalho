@@ -60,7 +60,8 @@ def simular_rr(processos, quantum, context_switch):
     return processos, timeline_rica, tempo
 
 
-def escalonamento_rr(json_data):
+
+def escalonamento_rr(json_data, quer_animacao=False): 
     metadata = json_data["metadata"]
     context_switch = metadata["context_switch_cost"]
     janela = metadata["throughput_window_T"]
@@ -72,7 +73,6 @@ def escalonamento_rr(json_data):
 
     for q in quantums:
         proc_rr, timeline_rr, tempo_total_rr = simular_rr(processos_base, q, context_switch)
-        
         metricas_rr = calcular_metricas(proc_rr, janela, timeline_rr, tempo_total_rr)
         
         exibir_painel_resultados(
@@ -83,4 +83,6 @@ def escalonamento_rr(json_data):
             tempo_total=tempo_total_rr,
             janela=janela
         )
-        animar_simulacao_detalhada(timeline_rr, velocidade=0.04)
+        
+        if quer_animacao:
+            animar_simulacao_detalhada(timeline_rr, velocidade=0.04)

@@ -13,10 +13,14 @@ def main():
         print(f"{Colors.RED}{Colors.BOLD}Erro crítico: O arquivo '{caminho_arquivo}' não foi encontrado.{Colors.RESET}")
         return
 
+
+    escolha = input(f"{Colors.CYAN}{Colors.BOLD}Deseja ativar a animação em tempo real? (s/N): {Colors.RESET}").lower()
+    quer_animacao = True if escolha == 's' else False
+
     print(f"\n{Colors.GREEN}{Colors.BOLD}[✓] Dados carregados com sucesso! Iniciando simulações...{Colors.RESET}\n")
 
-    escalonamento_srtf(dados_entrada)
-    escalonamento_rr(dados_entrada)
+    escalonamento_srtf(dados_entrada, quer_animacao)
+    escalonamento_rr(dados_entrada, quer_animacao)
 
 if __name__ == "__main__":
     main()

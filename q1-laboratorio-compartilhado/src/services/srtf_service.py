@@ -71,7 +71,8 @@ def simular_srtf(processos, context_switch):
     return processos, timeline_rica, tempo
 
 
-def escalonamento_srtf(json_data):
+
+def escalonamento_srtf(json_data, quer_animacao=False): # Parâmetro adicionado
     metadata = json_data["metadata"]
     context_switch = metadata["context_switch_cost"]
     janela = metadata["throughput_window_T"]
@@ -81,7 +82,6 @@ def escalonamento_srtf(json_data):
         processos_base.append(Processo(p_data["pid"], p_data["arrival_time"], p_data["burst_time"]))
 
     proc_srtf, timeline_srtf, tempo_total_srtf = simular_srtf(processos_base, context_switch)
-    
     metricas_srtf = calcular_metricas(proc_srtf, janela, timeline_srtf, tempo_total_srtf)
     
     exibir_painel_resultados(
@@ -92,4 +92,6 @@ def escalonamento_srtf(json_data):
         tempo_total=tempo_total_srtf,
         janela=janela
     )
-    animar_simulacao_detalhada(timeline_srtf, velocidade=0.04)
+    
+    if quer_animacao:
+        animar_simulacao_detalhada(timeline_srtf, velocidade=0.04)
