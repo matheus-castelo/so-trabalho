@@ -59,6 +59,7 @@ def simular_rr(processos, quantum, context_switch):
 
     return processos, timeline_rica, tempo
 
+
 def escalonamento_rr(json_data):
     metadata = json_data["metadata"]
     context_switch = metadata["context_switch_cost"]
@@ -71,7 +72,8 @@ def escalonamento_rr(json_data):
 
     for q in quantums:
         proc_rr, timeline_rr, tempo_total_rr = simular_rr(processos_base, q, context_switch)
-        metricas_rr = calcular_metricas(proc_rr, janela)
+        
+        metricas_rr = calcular_metricas(proc_rr, janela, timeline_rr, tempo_total_rr)
         
         exibir_painel_resultados(
             titulo=f"ROUND ROBIN (Quantum = {q})",

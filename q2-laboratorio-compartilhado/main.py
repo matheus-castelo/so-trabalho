@@ -1,9 +1,3 @@
-"""Ponto de entrada da simulação do laboratório compartilhado.
-
-Cria os recursos compartilhados, instancia os programadores e
-executa a simulação em loop infinito até Ctrl+C.
-"""
-
 import threading
 import time
 from src.utils.constants import NUM_PROGRAMMERS
@@ -13,8 +7,6 @@ from src.models.programmer import Programmer
 
 
 def main() -> None:
-    """Inicializa e executa a simulação do laboratório compartilhado."""
-    print("Iniciando o trabalho no laboratório...")
     print("-" * 50)
 
     resource_manager: ResourceManager = ResourceManager()

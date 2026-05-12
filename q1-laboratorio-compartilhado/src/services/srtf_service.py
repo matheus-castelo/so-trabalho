@@ -70,6 +70,7 @@ def simular_srtf(processos, context_switch):
 
     return processos, timeline_rica, tempo
 
+
 def escalonamento_srtf(json_data):
     metadata = json_data["metadata"]
     context_switch = metadata["context_switch_cost"]
@@ -80,7 +81,8 @@ def escalonamento_srtf(json_data):
         processos_base.append(Processo(p_data["pid"], p_data["arrival_time"], p_data["burst_time"]))
 
     proc_srtf, timeline_srtf, tempo_total_srtf = simular_srtf(processos_base, context_switch)
-    metricas_srtf = calcular_metricas(proc_srtf, janela)
+    
+    metricas_srtf = calcular_metricas(proc_srtf, janela, timeline_srtf, tempo_total_srtf)
     
     exibir_painel_resultados(
         titulo="SHORTEST REMAINING TIME FIRST (SRTF)",

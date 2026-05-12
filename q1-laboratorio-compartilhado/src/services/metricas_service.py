@@ -1,6 +1,7 @@
 import statistics
 
-def calcular_metricas(processos, janela):
+def calcular_metricas(processos, janela, timeline_rica, tempo_total):
+   
     tempos_resposta = []
     tempos_retorno = []
     concluidos_ate_T = 0
@@ -15,10 +16,15 @@ def calcular_metricas(processos, janela):
         if p.finish_time <= janela:
             concluidos_ate_T += 1
 
+   
+    ticks_uteis = sum(1 for estado in timeline_rica if estado["processo"] != "idle")
+    eficiencia = (ticks_uteis / tempo_total) * 100 if tempo_total > 0 else 0
+
     return {
         "resp_media": statistics.mean(tempos_resposta),
         "resp_std": statistics.pstdev(tempos_resposta),
         "ret_media": statistics.mean(tempos_retorno),
         "ret_std": statistics.pstdev(tempos_retorno),
-        "vazao": concluidos_ate_T / janela
+        "vazao": concluidos_ate_T / janela,
+        "eficiencia": eficiencia
     }
