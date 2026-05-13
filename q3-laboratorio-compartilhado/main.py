@@ -1,33 +1,41 @@
 import threading
+import json
+import os
+import time
 from src.models.VetRoomFair import VetRoomFair
 from src.models.VetRoomStarvation import VetRoomStarvation
 from src.services.animal_service import animal_task
 
-data = {
-    "workload": {
-        "animals": [
-            {"id": "D01", "species": "DOG", "arrival_time": 0, "rest_duration": 5},
-            {"id": "C01", "species": "CAT", "arrival_time": 1, "rest_duration": 4},
-            {"id": "D02", "species": "DOG", "arrival_time": 2, "rest_duration": 6},
-            {"id": "C02", "species": "CAT", "arrival_time": 3, "rest_duration": 2},
-            {"id": "D03", "species": "DOG", "arrival_time": 4, "rest_duration": 3}
-        ]
-    }
-}
+def run_simulation(protocol_class):
+    print(f"--- Iniciando simulação com: {protocol_class.__name__} ---")
+    
+    base_dir = os.path.dirname(__file__)
+    json_path = os.path.join(base_dir, "src", "data", "petshop.json")
 
-def run_simulation(protocol_class,json_data):
-    print(f"Iniciando simulação com:{protocol_class.__name__}")
+    try:
+        with open(json_path, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+    except FileNotFoundError:
+        print(f"ERRO: Arquivo não encontrado em {json_path}")
+        return
+
     room = protocol_class()
     threads = []
+    
+    time_unit = json_data['workload'].get('time_unit', 'ticks')
+    animals = json_data['workload']['animals']
 
-    for animal_info in json_data['workload']['animals']:
-        t = threading.Thread(target=animal_task, args=(room,animal_info))
+    for animal_info in animals:
+        t = threading.Thread(target=animal_task, args=(room, animal_info))
         threads.append(t)
+
     for t in threads:
         t.start()
+
     for t in threads:
         t.join()
-    print("Simulação finalizada.")
+
+    print("--- Simulação finalizada com sucesso ---")
 
 if __name__ == "__main__":
-    run_simulation(VetRoomFair, data)
+    run_simulation(VetRoomStarvation)
