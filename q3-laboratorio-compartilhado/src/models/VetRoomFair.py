@@ -1,47 +1,77 @@
 import threading
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class VetRoomFair:
+
     def __init__(self):
-        self.door = threading.Lock()
-        self.turnstile = threading.Lock()
-        self.dog_lock = threading.Lock()
-        self.cat_lock = threading.Lock()
+        self.lock = threading.Lock()
+        self.cond = threading.Condition(self.lock)
+
+        self.current_species = None
+
         self.dog_count = 0
         self.cat_count = 0
-    
+
+        self.waiting_dogs = 0
+        self.waiting_cats = 0
+
+        self.next_turn = None
+
     def enter(self, animal_id, species):
-        with self.turnstile:
+        with self.cond:
             if species == "DOG":
-                with self.dog_lock:
-                    if self.dog_count == 0:
-                        self.door.acquire()
-                    self.dog_count += 1
+                self.waiting_dogs += 1
+                while (
+                    self.current_species == "CAT"
+                    or (self.waiting_cats > 0 and self.next_turn != "DOG")
+                ):
+                    self.cond.wait()
+                self.waiting_dogs -= 1
+                self.dog_count += 1
+                self.current_species = "DOG"
             else:
-                with self.cat_lock:
-                    if self.cat_count == 0:
-                        self.door.acquire()
-                    self.cat_count += 1
-        self._print_room_state(f"{animal_id}({species}) ENTROU")
+                self.waiting_cats += 1
+                while (
+                    self.current_species == "DOG"
+                    or (self.waiting_dogs > 0 and self.next_turn != "CAT")
+                ):
+                    self.cond.wait()
+                self.waiting_cats -= 1
+                self.cat_count += 1
+                self.current_species = "CAT"
+
+        self._log_state(f"{animal_id}({species}) ENTROU")
 
     def leave(self, animal_id, species):
-        if species == "DOG":
-            with self.dog_lock:
+        with self.cond:
+            if species == "DOG":
                 self.dog_count -= 1
                 if self.dog_count == 0:
-                    self.door.release()
-        else:
-            with self.cat_lock:
+                    self.current_species = None
+                    self.next_turn = "CAT" if self.waiting_cats > 0 else "DOG"
+                    self.cond.notify_all()
+            else:
                 self.cat_count -= 1
                 if self.cat_count == 0:
-                    self.door.release()
-        self._print_room_state(f"{animal_id}({species}) SAIU")
+                    self.current_species = None
+                    self.next_turn = "DOG" if self.waiting_dogs > 0 else "CAT"
+                    self.cond.notify_all()
 
-    def _print_room_state(self, action):
-        if self.dog_count > 0:
-            state = f"CÃES NA SALA ({self.dog_count})"
-        elif self.cat_count > 0:
-            state = f"GATOS NA SALA ({self.cat_count})"
+        self._log_state(f"{animal_id}({species}) SAIU")
+
+    def _log_state(self, action):
+        with self.cond:
+            dogs = self.dog_count
+            cats = self.cat_count
+
+        if dogs > 0:
+            state = f"CÃES NA SALA ({dogs})"
+        elif cats > 0:
+            state = f"GATOS NA SALA ({cats})"
         else:
             state = "VAZIA"
-        
-        print(f"[{action}] -> Estado da Sala: {state}")
+
+        logger.info("[%s] -> Estado: %s", action, state)
